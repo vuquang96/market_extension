@@ -99,6 +99,7 @@ function saveCsgoroll(){
 		},
 		success: function(result){
 		 	localStorage.removeItem(csgoroll_store);
+		 	localStorage.removeItem(csgoroll_check_store);
 		 	localStorage.removeItem(list_inventory_store);
 	  	},
 	  	error: function(result){
@@ -184,7 +185,7 @@ function downloadData(){
 
 		 	setTimeout(function(){
     			window.close();
-    		}, 3000);
+    		}, 5000);
 	  	},
 	  	error: function(result){
 		  	ajaxError();

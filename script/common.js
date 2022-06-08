@@ -5,6 +5,8 @@ var buff_store 				= 'market_buff_store';
 var csgoroll_store 			= 'market_csgoroll_store';
 var csgoroll_default_store 	= 'market_csgoroll_default_store';
 var conversionprice_store 	= 'market_conversionprice_store';
+var user_id_store 			= 'market_user_id';
+var csgoroll_check_store 	= 'market_csgoroll_check';
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

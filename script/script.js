@@ -40,6 +40,20 @@ jQuery(document).ready(function(){
 			$(".progress-empire .progress__bar").css('width', '100%');
 			$(".progress-buff .progress__bar").css('width', '100%');
 
+			$("nav button cw-user-avatar-badge.ng-star-inserted").trigger('click');
+			setTimeout(function(){
+				$(".cdk-overlay-container .cdk-overlay-pane cw-portable-profile a").each(function(index, item){
+					var href = $(item).attr('href');
+					if(href.includes("player")) {
+						var data = href.split("/")
+						var userId = data.pop();
+						localStorage.setItem(user_id_store, userId);
+					}
+				});
+			}, 2000);
+
+			await sleep(3 * 1000);
+
 			getInventory();
 
 			await getDataCsgorollInventory();
@@ -106,6 +120,8 @@ jQuery(document).ready(function(){
     		localStorage.removeItem(list_inventory_store);
     		localStorage.removeItem(conversionprice_store);
     		localStorage.removeItem(csgoroll_store);
+    		localStorage.removeItem(csgoroll_check_store);
+    		localStorage.removeItem(user_id_store);
 
     		var asyn 			= getParam('asyn');
     		if(asyn) {
@@ -174,6 +190,7 @@ jQuery(document).ready(function(){
 		});
 		run();*/
 
+		//console.log(searchCsgoroll('Butterfly Knife | Blue Steel (Field-Tested)'))
 	}, 6000);
 
 });

@@ -28,24 +28,37 @@ function searchCsgoroll(name){
 		type : 'get',
 		data : {
 			'operationName' : 'TradeList',
-			'variables' : `{"first":1,"orderBy":"TOTAL_VALUE","status":"LISTED","marketName":"${name}","steamAppName":"CSGO"}`,
+			'variables' : `{"first":100,"orderBy":"TOTAL_VALUE","status":"LISTED","marketName":"${name}","steamAppName":"CSGO"}`,
 			'extensions' : '{"persistedQuery":{"version":1,"sha256Hash":"fbb0ada835e37bdb9121cdce237f15d14f167850e8b2ccf919344844270d67d0"}}',
 		},
 		success: function(result){
 			console.log(result);
 			var data = [];
+			var dataCheck = [];
 			if(result.data.trades.edges.length > 0) {
-				var tmp = {
-					'name' 				: result.data.trades.edges[0].node.tradeItems[0].marketName,
-					'price' 			: result.data.trades.edges[0].node.tradeItems[0].value,
+				$.each(result.data.trades.edges, function(index, item){
+					var tmp = {
+						'name' 				: item.node.tradeItems[0].marketName,
+						'price' 			: item.node.tradeItems[0].value,
+					};
+					data.push(tmp);
+				});
+
+				var tmpCheck = {
+					'name' 				: name,
 				};
-				data.push(tmp);
+				dataCheck.push(tmpCheck);
 			} else {
 				var tmp = {
 					'name' 				: name,
 					'price' 			: 0,
 				};
 				data.push(tmp);
+
+				var tmpCheck = {
+					'name' 				: name,
+				};
+				dataCheck.push(tmpCheck);
 			}
 
 			if(localStorage.getItem(csgoroll_store) == null){
@@ -60,8 +73,21 @@ function searchCsgoroll(name){
 	     		var csgorollStore = merData;
 	     	}
 
+	     	// Check Ready
+	     	if(localStorage.getItem(csgoroll_check_store) == null){
+				localStorage.setItem(csgoroll_check_store, JSON.stringify(dataCheck));
+
+				var csgorollCheckStore = dataCheck;
+	     	} else {	
+	     		var oldDataCheck = $.parseJSON(localStorage.getItem(csgoroll_check_store));
+	     		var merDataCheck = [...oldDataCheck, ...dataCheck];
+	     		localStorage.setItem(csgoroll_check_store, JSON.stringify(merDataCheck));
+
+	     		var csgorollCheckStore = merDataCheck;
+	     	}
+
      		var inventoryStore = $.parseJSON(localStorage.getItem(list_inventory_store));
-     		if(csgorollStore.length == inventoryStore.length) {
+     		if(csgorollCheckStore.length == inventoryStore.length) {
      			saveCsgoroll();
      		}
 	  	},
@@ -158,6 +184,8 @@ async function getDataBuff(url){
 }
 
 async function getDataCsgorollInventory(){
+	var userId = localStorage.getItem(user_id_store);
+
 	const response = await fetch("https://api.csgoroll.com/graphql", {
 	  "headers": {
 	    "accept": "application/json, text/plain, */*",
@@ -173,13 +201,14 @@ async function getDataCsgorollInventory(){
 	  },
 	  "referrer": "https://www.csgoroll.com/",
 	  "referrerPolicy": "strict-origin-when-cross-origin",
-	  "body": "{\"operationName\":\"InventoryItemVariants\",\"variables\":{\"steamAppName\":\"CSGO\",\"userId\":\"VXNlcjo2MDEyMTU3\"},\"query\":\"query InventoryItemVariants($steamAppName: SteamAppName!, $steamId: String, $userId: ID) {\\n  inventoryItemVariants(\\n    steamAppName: $steamAppName\\n    steamId: $steamId\\n    userId: $userId\\n  ) {\\n    steamItems {\\n      itemVariant {\\n        ...ItemVariant\\n        __typename\\n      }\\n      cacheExpiration\\n      tradable\\n      __typename\\n    }\\n    activeTradeItems {\\n      ...ItemVariant\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment ItemVariant on ItemVariant {\\n  id\\n  itemId\\n  name\\n  brand\\n  iconUrl\\n  value\\n  currency\\n  displayValue\\n  exchangeRate\\n  shippingCost\\n  usable\\n  obtainable\\n  withdrawable\\n  depositable\\n  externalId\\n  type\\n  category {\\n    id\\n    name\\n    __typename\\n  }\\n  color\\n  size\\n  rarity\\n  availableAssets {\\n    steamAssetId\\n    availableAt\\n    __typename\\n  }\\n  purchasable\\n  totalRequested\\n  totalAvailable\\n  totalFulfilled\\n  totalUnfulfilled\\n  createdAt\\n  __typename\\n}\\n\"}",
+	  "body": "{\"operationName\":\"InventoryItemVariants\",\"variables\":{\"steamAppName\":\"CSGO\",\"userId\":\""+userId+"\"},\"query\":\"query InventoryItemVariants($steamAppName: SteamAppName!, $steamId: String, $userId: ID) {\\n  inventoryItemVariants(\\n    steamAppName: $steamAppName\\n    steamId: $steamId\\n    userId: $userId\\n  ) {\\n    steamItems {\\n      itemVariant {\\n        ...ItemVariant\\n        __typename\\n      }\\n      cacheExpiration\\n      tradable\\n      __typename\\n    }\\n    activeTradeItems {\\n      ...ItemVariant\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment ItemVariant on ItemVariant {\\n  id\\n  itemId\\n  name\\n  brand\\n  iconUrl\\n  value\\n  currency\\n  displayValue\\n  exchangeRate\\n  shippingCost\\n  usable\\n  obtainable\\n  withdrawable\\n  depositable\\n  externalId\\n  type\\n  category {\\n    id\\n    name\\n    __typename\\n  }\\n  color\\n  size\\n  rarity\\n  availableAssets {\\n    steamAssetId\\n    availableAt\\n    __typename\\n  }\\n  purchasable\\n  totalRequested\\n  totalAvailable\\n  totalFulfilled\\n  totalUnfulfilled\\n  createdAt\\n  __typename\\n}\\n\"}",
 	  "method": "POST",
 	  "mode": "cors",
 	  "credentials": "include"
 	});
 	var result = await response.json();
-	
+	console.log(response)
+	console.log(result)
 	if(response.status == 200) {
 		var data = [];
 		$.each(result.data.inventoryItemVariants.steamItems, function(index, item){

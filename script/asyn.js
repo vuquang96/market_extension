@@ -11,10 +11,7 @@ function saveInventory(){
 		 	localStorage.removeItem(inventory_store);
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
@@ -36,10 +33,7 @@ function saveCsgoempire(){
 		 	}, 5000);
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
@@ -60,10 +54,7 @@ function saveBuff(){
 		 	}, 5000);
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
@@ -78,10 +69,7 @@ function emptyTable(){
 		 	console.log(result);
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
@@ -94,15 +82,9 @@ function getInventory(){
 		data : {},
 		success: function(result){
 		 	localStorage.setItem(list_inventory_store, JSON.stringify(result));
-		 	setTimeout(function(){
-    			csgorollDefault();
-    		}, 1000);
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
@@ -120,16 +102,14 @@ function saveCsgoroll(){
 		 	localStorage.removeItem(list_inventory_store);
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
 
 function saveCsgorollDefault(){
 	var data_store = localStorage.getItem(csgoroll_default_store);
+	console.log(data_store)
 	$.ajax({
 		url: "http://localhost:9999/serve-app/public/api/v1/market/csgoroll-default", 
 		type : 'post',
@@ -143,10 +123,7 @@ function saveCsgorollDefault(){
     		}, 1000);
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
@@ -162,10 +139,7 @@ function dataReady(){
 		 	}
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
@@ -182,7 +156,6 @@ function downloadData(){
 			'csgoroll' : data_store.conversionprice_csgoroll,
 		},
 		success: function(result){
-		 	console.log(result);
 		 	var data = [];
 		 	$.each(result, function(index, item){
 		 		let buff = (item.buff == null) ? '' : item.buff; 
@@ -214,10 +187,7 @@ function downloadData(){
     		}, 3000);
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }

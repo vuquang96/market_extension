@@ -16,8 +16,6 @@ jQuery(document).ready(function(){
 
 	     		empirePages = await getDataCsgoempire(createUrlCsgoempire(i));
 	     		$(".progress-empire .progress__bar").css('width', percentage(i, empirePages) + '%');
-
-	     		await sleep(getRandomInt(2) * 1000);
 	     	}
 
 	     	saveCsgoempire();
@@ -33,7 +31,7 @@ jQuery(document).ready(function(){
 	     		buffPages = await getDataBuff(createUrlBuff(i));
 	     		$(".progress-buff .progress__bar").css('width', percentage(i, buffPages) + '%');
 
-	     		await sleep(getRandomInt(2) * 1000);
+	     		//await sleep(getRandomInt(2) * 1000);
 	     	}
 	     	saveBuff();
 	    }
@@ -42,22 +40,31 @@ jQuery(document).ready(function(){
 			$(".progress-empire .progress__bar").css('width', '100%');
 			$(".progress-buff .progress__bar").css('width', '100%');
 
-			$("input#mat-slide-toggle-2-input").prop(":checked", true).trigger('click').trigger('change');
+			getInventory();
 
-			setTimeout(function(){
-				getInventory();
-			}, 10000);
-			
+			await getDataCsgorollInventory();
+
+			await sleep(2 * 1000);
+
+			saveCsgorollDefault();
 
 			setInterval(function () {
 				dataReady();
 
 				showNotify('Đang tạo file');
-			}, 20000);
+			}, 12000);
+
+			var percentLoad = 1;
+			setInterval(function () {
+				percentLoad += 1;
+				if(percentLoad <= 100) {
+					$(".progress-csgoroll .progress__bar").css('width', percentLoad + '%');
+				}
+			}, 12000 / 100);
 
 			setTimeout(function(){
 				window.close();
-			}, 3 * 60 * 1000);
+			}, 2 * 60 * 1000);
 	    }
 	}
 
@@ -119,7 +126,7 @@ jQuery(document).ready(function(){
 				}
     		}
     	}
-	}, 5000);
+	}, 3000);
 
 
 	function loading(){
@@ -167,13 +174,7 @@ jQuery(document).ready(function(){
 		});
 		run();*/
 
-		/*getInventory();
-		setTimeout(function(){
-			csgorollDefault();
-		}, 2000);*/
-		//getInventory();
-
-	}, 5000);
+	}, 3000);
 
 });
 

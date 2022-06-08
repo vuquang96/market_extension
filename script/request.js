@@ -10,47 +10,6 @@ function createUrlCsgoempire(paged = 1, page_size = 500) {
 	return `https://csgoempire.com/api/v2/trading/items?per_page=${page_size}&page=${paged}&price_max_above=15&sort=asc&order=market_value`;
 }
 
-function csgorollDefault(){
-	$('cw-message-list').remove();
-	var data =  [];
-	var elm = $(".ng-star-inserted .grid.ng-star-inserted cw-item.ng-star-inserted");
-
-	$.each(elm, function(index, item){
-		let price = $.trim($(item).find(`.currency-value`).text());
-
-		let brand 			= $.trim($(item).find('.brand').text());
-		let variant_text 	= $.trim($(item).find('.variant-text').text());
-		let name 			= $.trim($(item).find('.name').text());
-
-		let fullName = `${brand}`;
-		if(name != ''){
-			fullName += ` | ${name}`;
-		}
-		if(variant_text != ''){
-			fullName += ` (${variant_text})`;
-		}
-		let tmp = {
-			'name' 				: fullName,
-			'price' 			: price,
-		};
-		data.push(tmp);
-	});
-	console.log(data)
-	var inventoryStore = $.parseJSON(localStorage.getItem(list_inventory_store));
-	/*if(elm.length == inventoryStore.length) {
-		setTimeout(function(){
-			console.log('saveCsgorollDefault')
-			localStorage.setItem(csgoroll_default_store, JSON.stringify(data));
-			saveCsgorollDefault();
-		}, 2000);
-	}*/
-
-	setTimeout(function(){
-		console.log('saveCsgorollDefault')
-		localStorage.setItem(csgoroll_default_store, JSON.stringify(data));
-		saveCsgorollDefault();
-	}, 12000);
-}
 
 function csgorollWithdraw(){
 	var inventory = $.parseJSON(localStorage.getItem(list_inventory_store));
@@ -107,10 +66,7 @@ function searchCsgoroll(name){
      		}
 	  	},
 	  	error: function(result){
-		  	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
-		  	setTimeout(function(){
-    			window.close();
-    		}, 5000);
+		  	ajaxError();
 	    },
 	});
 }
@@ -199,4 +155,45 @@ async function getDataBuff(url){
 	} else {
 		return -1;
 	}
+}
+
+async function getDataCsgorollInventory(){
+	const response = await fetch("https://api.csgoroll.com/graphql", {
+	  "headers": {
+	    "accept": "application/json, text/plain, */*",
+	    "accept-language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6",
+	    "content-type": "application/json",
+	    "ngsw-bypass": "true",
+	    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"102\", \"Google Chrome\";v=\"102\"",
+	    "sec-ch-ua-mobile": "?0",
+	    "sec-ch-ua-platform": "\"Windows\"",
+	    "sec-fetch-dest": "empty",
+	    "sec-fetch-mode": "cors",
+	    "sec-fetch-site": "same-site"
+	  },
+	  "referrer": "https://www.csgoroll.com/",
+	  "referrerPolicy": "strict-origin-when-cross-origin",
+	  "body": "{\"operationName\":\"InventoryItemVariants\",\"variables\":{\"steamAppName\":\"CSGO\",\"userId\":\"VXNlcjo2MDEyMTU3\"},\"query\":\"query InventoryItemVariants($steamAppName: SteamAppName!, $steamId: String, $userId: ID) {\\n  inventoryItemVariants(\\n    steamAppName: $steamAppName\\n    steamId: $steamId\\n    userId: $userId\\n  ) {\\n    steamItems {\\n      itemVariant {\\n        ...ItemVariant\\n        __typename\\n      }\\n      cacheExpiration\\n      tradable\\n      __typename\\n    }\\n    activeTradeItems {\\n      ...ItemVariant\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment ItemVariant on ItemVariant {\\n  id\\n  itemId\\n  name\\n  brand\\n  iconUrl\\n  value\\n  currency\\n  displayValue\\n  exchangeRate\\n  shippingCost\\n  usable\\n  obtainable\\n  withdrawable\\n  depositable\\n  externalId\\n  type\\n  category {\\n    id\\n    name\\n    __typename\\n  }\\n  color\\n  size\\n  rarity\\n  availableAssets {\\n    steamAssetId\\n    availableAt\\n    __typename\\n  }\\n  purchasable\\n  totalRequested\\n  totalAvailable\\n  totalFulfilled\\n  totalUnfulfilled\\n  createdAt\\n  __typename\\n}\\n\"}",
+	  "method": "POST",
+	  "mode": "cors",
+	  "credentials": "include"
+	});
+	var result = await response.json();
+	
+	if(response.status == 200) {
+		var data = [];
+		$.each(result.data.inventoryItemVariants.steamItems, function(index, item){
+			var tmp = {
+				'name' 				: item.itemVariant.externalId,
+				'price' 			: item.itemVariant.displayValue,
+			};
+			data.push(tmp);
+		});
+
+		localStorage.setItem(csgoroll_default_store, JSON.stringify(data));
+
+		return true;
+	}
+
+	return false;
 }

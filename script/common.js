@@ -14,6 +14,13 @@ function getRandomInt(max) {
   return Math.ceil(Math.random() * max);
 }
 
+function ajaxError(){
+	showNotify('Có lỗi xảy ra, vui lòng thử lại', 'error');
+  	setTimeout(function(){
+		window.close();
+	}, 5000);
+}
+
 function getTime(){
 	var today = new Date();
 	var dd = today.getDate();

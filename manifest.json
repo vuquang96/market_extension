@@ -1,0 +1,49 @@
+{
+    "name": "Market Csgo",
+    "description": "Market Csgo",
+    "version": "1.0",
+    "manifest_version": 2,
+    "permissions": [
+        "storage",
+        "activeTab",
+        "cookies",
+        "https://*/",
+        "<all_urls>",
+        "webRequest",
+        "webRequestBlocking",
+        "contextMenus"
+    ],
+    "content_scripts": [
+        {
+            "js": [
+                "lib/jquery-3.5.1.min.js",
+                "lib/notify.min.js",
+                "script/common.js",
+                "script/asyn.js",
+                "script/request.js",
+                "script/script.js"
+            ],
+            "css": [ "css/style.css" ],
+            "matches": [
+                "https://buff.163.com/*",
+                "https://csgoempire.com/*",
+                "https://www.csgoroll.com/*"
+            ]
+        }
+    ],
+    "icons": {
+        "16": "icon.png",
+        "32": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+    },
+    "browser_action": {
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "homepage_url": "https://www.google.com/"
+}

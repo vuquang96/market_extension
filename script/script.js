@@ -126,7 +126,7 @@ jQuery(document).ready(function(){
 				}
     		}
     	}
-	}, 3000);
+	}, 6000);
 
 
 	function loading(){
@@ -174,7 +174,7 @@ jQuery(document).ready(function(){
 		});
 		run();*/
 
-	}, 3000);
+	}, 6000);
 
 });
 

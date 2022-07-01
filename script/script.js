@@ -16,6 +16,7 @@ jQuery(document).ready(function(){
 
 	     		empirePages = await getDataCsgoempire(createUrlCsgoempire(i));
 	     		$(".progress-empire .progress__bar").css('width', percentage(i, empirePages) + '%');
+	     		await sleep(5 * 1000);
 	     	}
 
 	     	saveCsgoempire();
@@ -31,7 +32,7 @@ jQuery(document).ready(function(){
 	     		buffPages = await getDataBuff(createUrlBuff(i));
 	     		$(".progress-buff .progress__bar").css('width', percentage(i, buffPages) + '%');
 
-	     		//await sleep(getRandomInt(2) * 1000);
+	     		await sleep(getRandomInt(2) * 1000);
 	     	}
 	     	saveBuff();
 	    }
@@ -85,11 +86,11 @@ jQuery(document).ready(function(){
 
 	setTimeout(function(){
 		if(window.location.hostname == 'csgoempire.com') {
-			localStorage.removeItem(inventory_store);
-			localStorage.removeItem(csgoempire_store);
-
 			chrome.storage.sync.get(["export_market_compare"], function (obj) {
 			    if(obj.export_market_compare !== undefined && obj.export_market_compare == 1){
+			    	localStorage.removeItem(inventory_store);
+					localStorage.removeItem(csgoempire_store);
+
 			    	chrome.storage.sync.set({"export_market_compare": '0'});
 			    	emptyTable();
 
@@ -103,12 +104,13 @@ jQuery(document).ready(function(){
 		}
 
 		if(window.location.hostname == 'buff.163.com') {
-			localStorage.removeItem(buff_store);
     		var asyn 			= getParam('asyn');
     		if(asyn) {
 				var time = new Date().getTime();
 				time -= asyn;
 				if(time < 60 * 1000) {
+					localStorage.removeItem(buff_store);
+					
 					changeurl(`?asyn=0`, 'buff.163.com');
 					createLoading();
 					run();
@@ -117,17 +119,17 @@ jQuery(document).ready(function(){
     	}
 
     	if(window.location.hostname == 'www.csgoroll.com') {
-    		localStorage.removeItem(list_inventory_store);
-    		localStorage.removeItem(conversionprice_store);
-    		localStorage.removeItem(csgoroll_store);
-    		localStorage.removeItem(csgoroll_check_store);
-    		localStorage.removeItem(user_id_store);
-
     		var asyn 			= getParam('asyn');
     		if(asyn) {
 				var time = new Date().getTime();
 				time -= asyn;
 				if(time < 60 * 1000) {
+					localStorage.removeItem(list_inventory_store);
+		    		localStorage.removeItem(conversionprice_store);
+		    		localStorage.removeItem(csgoroll_store);
+		    		localStorage.removeItem(csgoroll_check_store);
+		    		localStorage.removeItem(user_id_store);
+
 					changeurl(`?asyn=0`, 'www.csgoroll.com');
 					chrome.storage.sync.get(["conversionprice_csgoroll", "conversionprice_buff", "conversionprice_csgoempire"], function (obj) {
 					    var data = {
